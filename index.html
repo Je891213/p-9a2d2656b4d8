@@ -31,6 +31,10 @@
   #refresh{border:none;background:var(--accent);color:#fff;font-weight:700;
     border-radius:999px;padding:7px 16px;font-size:13px;cursor:pointer;flex-shrink:0}
   #refresh:disabled{opacity:.5}
+  /* 补翻是次要动作，做成描边按钮，别跟「刷新」抢注意力 */
+  #fixzh{border:1px solid var(--line);background:transparent;color:var(--dim);
+    border-radius:999px;padding:6px 12px;font-size:12px;cursor:pointer;flex-shrink:0}
+  #fixzh:disabled{opacity:.5}
   .srow{display:flex;gap:8px;align-items:center;margin-top:9px}
   #q{flex:1;min-width:0;background:var(--panel2);border:1px solid var(--line);
     color:var(--fg);border-radius:999px;padding:7px 14px;font-size:13.5px;
@@ -105,6 +109,7 @@
   <div class="bar">
     <h1 id="h1">全钟瑞监控</h1>
     <span class="upd" id="upd">载入中…</span>
+    <button id="fixzh" title="给还没有中文译名的条目补翻（Gemini 忙的时候入库那一刻会翻不出来）">补翻</button>
     <button id="refresh">刷新</button>
   </div>
   <div class="srow">
@@ -140,7 +145,8 @@ function makeRunner(){
     getFeed:    function(force, only){ call('getFeed', [force, only]); },
     refreshNow: function(only){ call('refreshNow', [only]); },
     searchWeb:  function(kw){ call('searchWeb', [kw]); },
-    feedStamp:  function(){ call('feedStamp', []); }
+    feedStamp:  function(){ call('feedStamp', []); },
+    retranslateMissing: function(n){ call('retranslateMissing', [n]); }
   };
   return o;
 }
@@ -459,6 +465,34 @@ function load(mode){
 }
 
 document.getElementById('refresh').onclick = function(){ load('deep'); };
+
+/**
+ * 补翻：给库里没有中文译名的条目补上。
+ *
+ * 单独一个按钮、不塞进「刷新」里 —— 每条内容只在入库那一刻翻一次，
+ * 撞上 Gemini 忙就永远空着；但补翻要逐批调模型，很慢（60 条约 40 秒），
+ * 挂在刷新上会让每次刷新都多等半分多钟。所以分开，想补的时候再点。
+ */
+document.getElementById('fixzh').onclick = function(){
+  var b = this;
+  if(b.disabled) return;
+  b.disabled = true;
+  b.textContent = '补翻中';
+  function finish(text, reload){
+    b.textContent = text;
+    if(reload) load('auto');
+    setTimeout(function(){ b.textContent = '补翻'; b.disabled = false; }, 3000);
+  }
+  google.script.run
+    .withSuccessHandler(function(r){
+      if(!r || !r.done){ finish('没有要补的', false); return; }
+      finish('补了 ' + r.done + ' 条' + (r.left ? '，还剩 ' + r.left : ''), true);
+    })
+    .withFailureHandler(function(e){
+      finish('补翻失败', false);
+    })
+    .retranslateMissing(60);
+};
 document.getElementById('pill').onclick = function(){
   if(pending){ data = pending; pending = null; }
   hidePill();
