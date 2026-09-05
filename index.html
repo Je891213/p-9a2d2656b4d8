@@ -365,8 +365,8 @@ function render(){
     // 显示内容有多新。看板是读库的，所以真正该报的是「后台上次收割是什么时候」，
     // 不是「这个页面什么时候读的库」
     var age = harvestedAt ? (Date.now() - new Date(harvestedAt)) / 60000 : -1;
-    upd.textContent = '共 ' + base().length + ' 条' +
-      (harvestedAt ? ' · ' + when(harvestedAt) + '抓取' : ' · 后台还没收割过');
+    // 不显示总条数（用户 09-05 要求），只留「什么时候抓的」——这个还有用，能看出后台是不是断了
+    upd.textContent = harvestedAt ? when(harvestedAt) + '抓取' : '后台还没收割过';
     // 超过一小时没收割，多半是定时任务没装或者挂了，标红提醒
     upd.className = 'upd' + (age < 0 || age > 60 ? ' stale' : '');
   }
