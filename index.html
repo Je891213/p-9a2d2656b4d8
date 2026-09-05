@@ -120,19 +120,20 @@
     <button id="fixzh" title="给还没有中文译名的条目补翻（Gemini 忙的时候入库那一刻会翻不出来）">补翻</button>
     <button id="refresh">刷新</button>
   </div>
-  <div class="srow">
-    <!-- 不放提示文字，用户说知道这里干什么（09-05） -->
-    <input id="q" type="search" autocomplete="off" enterkeyhint="search" placeholder="">
-    <button id="qx" hidden aria-label="清空">×</button>
-  </div>
-  <div class="hint" id="hint" hidden></div>
   <button id="foldBtn" class="fold" aria-expanded="true">收起筛选 ▴</button>
-  <!-- 两行筛选包在一个容器里整体折叠：渲染时会重画 chipsSrc/chipsWho 本身，
+  <!-- 搜索框和两行筛选一起包在这个容器里整体折叠：渲染时会重画 chipsSrc/chipsWho 本身，
        折叠状态挂在外层才不会被重画冲掉 -->
   <div id="filters">
+    <div class="srow">
+      <!-- 不放提示文字，用户说知道这里干什么（09-05） -->
+      <input id="q" type="search" autocomplete="off" enterkeyhint="search" placeholder="">
+      <button id="qx" hidden aria-label="清空">×</button>
+    </div>
     <div class="chips" id="chipsSrc"></div>
     <div class="chips chips2" id="chipsWho"></div>
   </div>
+  <!-- 提示条留在容器外：搜了别人之后就算把筛选收起来，也还看得见「正在搜谁、怎么退出」 -->
+  <div class="hint" id="hint" hidden></div>
 </header>
 
 <div id="pull">松手刷新</div>
