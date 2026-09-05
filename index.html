@@ -68,6 +68,10 @@
   a.card:active{background:var(--panel2)}
   .zh{font-size:15.5px;font-weight:650;word-break:break-word;line-height:1.45}
   .ko{color:var(--dim);font-size:12.5px;margin-top:4px;word-break:break-word}
+  /* DC 帖子的正文摘要。左边一道竖线跟标题区分开，别抢标题的视线 */
+  .body{margin-top:6px;padding-left:8px;border-left:2px solid var(--line);
+    font-size:13px;line-height:1.5;word-break:break-word}
+  .body .bko{color:var(--dim);font-size:12px;margin-top:2px}
   .row{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:8px;
     font-size:11.5px;color:var(--dim)}
   .tag{border-radius:4px;padding:1.5px 7px;font-weight:800;color:#fff;font-size:10.5px}
@@ -374,6 +378,12 @@ function render(){
     html += '<a class="card ' + it.source + '" href="' + esc(it.url) + '" target="_blank" rel="noopener">'
       + '<div class="zh">' + esc(it.title_zh || it.title) + '</div>'
       + (it.title_zh ? '<div class="ko">' + esc(it.title) + '</div>' : '')
+      // DC 帖子正文（搜索结果自带的摘要，一般很短）。有译文就中文在上、原文在下
+      + (it.body
+          ? '<div class="body">' + esc(it.body_zh || it.body)
+            + (it.body_zh ? '<div class="bko">' + esc(it.body) + '</div>' : '')
+            + '</div>'
+          : '')
       + '<div class="row"><span class="tag t-' + it.source + '">' + esc(SRC[it.source] || it.source) + '</span>'
       + badge(it.target)
       + (it.strict === false ? '<span class="loose">正文捎带</span>' : '')
