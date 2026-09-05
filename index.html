@@ -56,6 +56,10 @@
   .chips{display:flex;gap:6px;overflow-x:auto;margin-top:9px;padding-bottom:2px;
     scrollbar-width:none}
   .chips2{margin-top:6px}
+  /* 折叠筛选栏的小按钮：靠右、无底色，别跟上面的刷新按钮抢注意力 */
+  .fold{display:block;margin:8px 0 0 auto;border:none;background:transparent;
+    color:var(--dim);font-size:12px;cursor:pointer;padding:2px}
+  #filters[hidden]{display:none}
   .chips::-webkit-scrollbar{display:none}
   .chip{border:1px solid var(--line);background:var(--panel2);color:var(--dim);
     border-radius:999px;padding:4px 12px;font-size:12.5px;white-space:nowrap;flex-shrink:0}
@@ -122,8 +126,13 @@
     <button id="qx" hidden aria-label="清空">×</button>
   </div>
   <div class="hint" id="hint" hidden></div>
-  <div class="chips" id="chipsSrc"></div>
-  <div class="chips chips2" id="chipsWho"></div>
+  <button id="foldBtn" class="fold" aria-expanded="true">收起筛选 ▴</button>
+  <!-- 两行筛选包在一个容器里整体折叠：渲染时会重画 chipsSrc/chipsWho 本身，
+       折叠状态挂在外层才不会被重画冲掉 -->
+  <div id="filters">
+    <div class="chips" id="chipsSrc"></div>
+    <div class="chips chips2" id="chipsWho"></div>
+  </div>
 </header>
 
 <div id="pull">松手刷新</div>
@@ -475,6 +484,24 @@ function load(mode){
 }
 
 document.getElementById('refresh').onclick = function(){ load('deep'); };
+
+// 折叠筛选栏。手机上这两行占掉不少高度，收起来能多看两条内容；选择记在本地，下次打开还是上次那样
+(function(){
+  var btn = document.getElementById('foldBtn');
+  var box = document.getElementById('filters');
+  function apply(folded){
+    box.hidden = folded;
+    btn.textContent = folded ? '展开筛选 ▾' : '收起筛选 ▴';
+    btn.setAttribute('aria-expanded', folded ? 'false' : 'true');
+  }
+  var folded = pref('fold', '0') === '1';
+  apply(folded);
+  btn.onclick = function(){
+    folded = !folded;
+    setPref('fold', folded ? '1' : '0');
+    apply(folded);
+  };
+})();
 
 /**
  * 补翻：给库里没有中文译名的条目补上。
