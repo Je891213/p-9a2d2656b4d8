@@ -26,6 +26,8 @@
     border-bottom:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-top))}
   .bar{display:flex;align-items:center;gap:10px}
   h1{font-size:20px;margin:0;font-weight:800;letter-spacing:.5px;white-space:nowrap;line-height:1}
+  h1 .avatar{width:26px;height:26px;border-radius:50%;object-fit:cover;display:block;
+    border:1px solid var(--line)}
   .upd{font-size:11px;color:var(--dim);flex:1;min-width:0;
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   #refresh{border:none;background:var(--accent);color:#fff;font-weight:700;
@@ -115,7 +117,7 @@
 
 <header>
   <div class="bar">
-    <h1 id="h1">🦊</h1>
+    <h1 id="h1"><img class="avatar" src="data:image/jpeg;base64,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" alt="全钟瑞"></h1>
     <span class="upd" id="upd">载入中…</span>
     <button id="fixzh" title="给还没有中文译名的条目补翻（Gemini 忙的时候入库那一刻会翻不出来）">补翻</button>
     <button id="refresh">刷新</button>
@@ -416,7 +418,8 @@ function hidePill(){ document.getElementById('pill').hidden = true; }
 
 function onData(d, silent){
   EMOJI = d.emoji || {};
-  if(d.title) document.getElementById('h1').textContent = d.title;
+  // h1 里放的是头像，别再用后端标题覆盖它（会把 <img> 冲掉）；标题只更新浏览器标签页
+  if(d.title && d.title !== '🦊') document.title = d.title;
   updatedAt = (d.updated_at || '').replace('T', ' ').slice(5, 16);
   harvestedAt = d.harvested_at || '';
   if(d.stamp) stamp = d.stamp;   // 对齐轮询基准，免得下一分钟误判成"变了"
